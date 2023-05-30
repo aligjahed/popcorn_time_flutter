@@ -1,0 +1,12 @@
+{
+  "general": {
+    "doneBtn": "Done",
+    "nextBtn": "Next"
+  },
+  "introduction": {
+    "welcome": {
+      "title": "Hello, Welcome to Popcorn Time!",
+      "body": "Hello, Welcome to PopcornTime. Your personal movies and series database."
+    }
+  }
+}
