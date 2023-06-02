@@ -1,12 +1,31 @@
 {
   "general": {
     "doneBtn": "Done",
-    "nextBtn": "Next"
+    "nextBtn": "Next",
+    "experimental": "Experimental"
   },
   "introduction": {
     "welcome": {
       "title": "Hello, Welcome to Popcorn Time!",
       "body": "Hello, Welcome to PopcornTime. Your personal movies and series database."
+    },
+    "setting": {
+      "title": "Basic Settings",
+      "body": {
+        "path": {
+          "title": "Media Directory",
+          "tooltip": "Provide the path to the directory where you keep all your movies and series.",
+          "placeholder": "Select the path to your Movies and Series"
+        },
+        "organize": {
+          "title": "Organize into folders",
+          "tooltip": "If this is checked, we reorganize all your movies and series into their proper folders."
+        },
+        "poster": {
+          "title": "Auto fill posters",
+          "tooltip": "If this is checked, the poster of movies and series will be filled by a frame from the media."
+        }
+      }
     }
   }
 }

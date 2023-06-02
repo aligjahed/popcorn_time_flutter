@@ -4,15 +4,17 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:popcorn_time_flutter/screens/introduction_screen/local_widgets/setting_form.dart';
 
 class CostumeIntroductionScreen extends StatelessWidget {
-  const CostumeIntroductionScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final double windowWidth = MediaQuery.of(context).size.width;
     final double windowHeight = MediaQuery.of(context).size.height;
-    precacheImage(AssetImage('lib/assets/images/intro_welcome_background.jpg'), context);
-    precacheImage(AssetImage('lib/assets/images/background_texture.jpg'), context);
+    precacheImage(
+        AssetImage('lib/assets/images/intro_welcome_background.jpg'), context);
+    precacheImage(
+        AssetImage('lib/assets/images/background_texture.png'), context);
 
     final List<PageViewModel> introductionPages = [
       PageViewModel(
@@ -31,7 +33,24 @@ class CostumeIntroductionScreen extends StatelessWidget {
         image: const Center(
           child: Text("👋", style: TextStyle(fontSize: 150.0)),
         ),
-      )
+      ),
+      PageViewModel(
+        decoration: PageDecoration(
+            titleTextStyle: TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            bodyTextStyle: TextStyle(
+              color: Colors.white,
+            ),
+            imagePadding: EdgeInsets.all(0)),
+        title: tr('introduction.setting.title'),
+        bodyWidget: SettingForm(),
+        image: Center(
+          child: Image.asset('lib/assets/images/setting_icon.png' , height: 150,),
+        ),
+      ),
     ];
 
     return Stack(
@@ -100,7 +119,38 @@ class CostumeIntroductionScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(25.0)),
           ),
         ).animate().fadeIn(duration: 1000.ms).slide(duration: 750.ms),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 24, horizontal: 48),
+          alignment: Alignment.topLeft,
+          width: windowWidth,
+          height: windowHeight,
+          child: context.locale.toString() == 'en'
+              ? MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: IconButton(
+                    icon: Text(
+                      'fa',
+                      style: TextStyle(fontSize: 24, color: Colors.white),
+                    ),
+                    onPressed: () {
+                      context.setLocale(Locale('fa'));
+                    },
+                  ),
+                )
+              : MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: IconButton(
+                    icon: Text('en',
+                        style: TextStyle(fontSize: 24, color: Colors.white)),
+                    onPressed: () {
+                      context.setLocale(Locale('en'));
+                    },
+                  ),
+                ),
+        )
       ],
     );
   }
+
+  const CostumeIntroductionScreen({Key? key}) : super(key: key);
 }

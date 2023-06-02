@@ -20,6 +20,7 @@ dependencies:
   flutter_animate: ^4.1.1+1
   shared_preferences: ^2.1.1
   easy_localization: ^3.0.2
+  file_selector: ^0.9.3
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:popcorn_time_flutter/widgets/introduction_screen.dart';
+import 'package:popcorn_time_flutter/screens/introduction_screen/introduction_screen.dart';
 
 import 'db/database.dart';
 
@@ -30,9 +31,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return FluentApp(
       title: 'Popcorn Time',
-      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Estedad'),
+      theme: FluentThemeData(fontFamily: 'Estedad'),
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
