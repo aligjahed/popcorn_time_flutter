@@ -3,8 +3,9 @@ import 'package:floor/floor.dart';
 @entity
 class Episode {
   @primaryKey
-  final int Id;
+  final String Id;
+  final String? Quality;
   final String Path;
 
-  Episode(this.Id, this.Path);
+  Episode({required this.Id, this.Quality, required this.Path});
 }

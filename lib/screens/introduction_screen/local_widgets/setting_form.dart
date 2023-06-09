@@ -12,7 +12,6 @@ class SettingForm extends StatefulWidget {
 }
 
 class _SettingFormState extends State<SettingForm> {
-  final _formKey = GlobalKey<FormState>();
   bool isOrganizeCheck = false;
   bool isRandCoverChecked = false;
   String path = "";

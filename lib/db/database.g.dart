@@ -93,15 +93,15 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Series` (`Id` INTEGER NOT NULL, `Name` TEXT NOT NULL, `Path` TEXT NOT NULL, `Year` TEXT NOT NULL, `EpisodesID` TEXT NOT NULL, `TagsID` TEXT, `UserReviewID` TEXT, PRIMARY KEY (`Id`))');
+            'CREATE TABLE IF NOT EXISTS `Series` (`Id` TEXT NOT NULL, `Name` TEXT NOT NULL, `Path` TEXT NOT NULL, `Year` TEXT, `Quality` TEXT, `EpisodesID` TEXT NOT NULL, `TagsID` TEXT, `UserReviewID` TEXT, PRIMARY KEY (`Id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Movie` (`Id` INTEGER NOT NULL, `Name` TEXT NOT NULL, `Path` TEXT NOT NULL, `Year` TEXT NOT NULL, `TagsID` TEXT, `UserReviewID` TEXT, PRIMARY KEY (`Id`))');
+            'CREATE TABLE IF NOT EXISTS `Movie` (`Id` TEXT NOT NULL, `Name` TEXT NOT NULL, `Path` TEXT NOT NULL, `Year` TEXT, `TagsID` TEXT, `UserReviewID` TEXT, PRIMARY KEY (`Id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Episode` (`Id` INTEGER NOT NULL, `Path` TEXT NOT NULL, PRIMARY KEY (`Id`))');
+            'CREATE TABLE IF NOT EXISTS `Episode` (`Id` TEXT NOT NULL, `Quality` TEXT, `Path` TEXT NOT NULL, PRIMARY KEY (`Id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Tag` (`Id` INTEGER NOT NULL, `Name` TEXT NOT NULL, `Color` TEXT NOT NULL, PRIMARY KEY (`Id`))');
+            'CREATE TABLE IF NOT EXISTS `Tag` (`Id` TEXT NOT NULL, `Name` TEXT NOT NULL, `Color` TEXT NOT NULL, PRIMARY KEY (`Id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Review` (`Id` INTEGER NOT NULL, `ReviewText` TEXT NOT NULL, `Rating` INTEGER NOT NULL, PRIMARY KEY (`Id`))');
+            'CREATE TABLE IF NOT EXISTS `Review` (`Id` TEXT NOT NULL, `ReviewText` TEXT NOT NULL, `Rating` INTEGER NOT NULL, PRIMARY KEY (`Id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -192,12 +192,25 @@ class _$MoviesDao extends MoviesDao {
   Future<List<Movie>?> getAllMovies() async {
     return _queryAdapter.queryList('SELECT * FROM Movies',
         mapper: (Map<String, Object?> row) => Movie(
-            Id: row['Id'] as int,
+            Id: row['Id'] as String,
             Name: row['Name'] as String,
             Path: row['Path'] as String,
-            Year: row['Year'] as String,
+            Year: row['Year'] as String?,
             TagsID: row['TagsID'] as String?,
             UserReviewID: row['UserReviewID'] as String?));
+  }
+
+  @override
+  Future<Movie?> getMovieByName(String name) async {
+    return _queryAdapter.query('SELECT * FROM Movies WHERE Name = ?1',
+        mapper: (Map<String, Object?> row) => Movie(
+            Id: row['Id'] as String,
+            Name: row['Name'] as String,
+            Path: row['Path'] as String,
+            Year: row['Year'] as String?,
+            TagsID: row['TagsID'] as String?,
+            UserReviewID: row['UserReviewID'] as String?),
+        arguments: [name]);
   }
 
   @override
@@ -229,6 +242,7 @@ class _$SeriesDao extends SeriesDao {
                   'Name': item.Name,
                   'Path': item.Path,
                   'Year': item.Year,
+                  'Quality': item.Quality,
                   'EpisodesID': item.EpisodesID,
                   'TagsID': item.TagsID,
                   'UserReviewID': item.UserReviewID
@@ -242,6 +256,7 @@ class _$SeriesDao extends SeriesDao {
                   'Name': item.Name,
                   'Path': item.Path,
                   'Year': item.Year,
+                  'Quality': item.Quality,
                   'EpisodesID': item.EpisodesID,
                   'TagsID': item.TagsID,
                   'UserReviewID': item.UserReviewID
@@ -255,6 +270,7 @@ class _$SeriesDao extends SeriesDao {
                   'Name': item.Name,
                   'Path': item.Path,
                   'Year': item.Year,
+                  'Quality': item.Quality,
                   'EpisodesID': item.EpisodesID,
                   'TagsID': item.TagsID,
                   'UserReviewID': item.UserReviewID
@@ -276,13 +292,29 @@ class _$SeriesDao extends SeriesDao {
   Future<List<Series>?> getAllSeries() async {
     return _queryAdapter.queryList('SELECT * FROM Series',
         mapper: (Map<String, Object?> row) => Series(
-            row['EpisodesID'] as String,
-            row['Id'] as int,
-            row['Name'] as String,
-            row['Path'] as String,
-            row['Year'] as String,
-            row['TagsID'] as String?,
-            row['UserReviewID'] as String?));
+            EpisodesID: row['EpisodesID'] as String,
+            Id: row['Id'] as String,
+            Name: row['Name'] as String,
+            Path: row['Path'] as String,
+            Year: row['Year'] as String?,
+            Quality: row['Quality'] as String?,
+            TagsID: row['TagsID'] as String?,
+            UserReviewID: row['UserReviewID'] as String?));
+  }
+
+  @override
+  Future<Series?> getSeriesByName(String name) async {
+    return _queryAdapter.query('SELECT * FROM Series WHERE Name = ?1',
+        mapper: (Map<String, Object?> row) => Series(
+            EpisodesID: row['EpisodesID'] as String,
+            Id: row['Id'] as String,
+            Name: row['Name'] as String,
+            Path: row['Path'] as String,
+            Year: row['Year'] as String?,
+            Quality: row['Quality'] as String?,
+            TagsID: row['TagsID'] as String?,
+            UserReviewID: row['UserReviewID'] as String?),
+        arguments: [name]);
   }
 
   @override
@@ -309,20 +341,29 @@ class _$EpisodeDao extends EpisodeDao {
         _episodeInsertionAdapter = InsertionAdapter(
             database,
             'Episode',
-            (Episode item) =>
-                <String, Object?>{'Id': item.Id, 'Path': item.Path}),
+            (Episode item) => <String, Object?>{
+                  'Id': item.Id,
+                  'Quality': item.Quality,
+                  'Path': item.Path
+                }),
         _episodeUpdateAdapter = UpdateAdapter(
             database,
             'Episode',
             ['Id'],
-            (Episode item) =>
-                <String, Object?>{'Id': item.Id, 'Path': item.Path}),
+            (Episode item) => <String, Object?>{
+                  'Id': item.Id,
+                  'Quality': item.Quality,
+                  'Path': item.Path
+                }),
         _episodeDeletionAdapter = DeletionAdapter(
             database,
             'Episode',
             ['Id'],
-            (Episode item) =>
-                <String, Object?>{'Id': item.Id, 'Path': item.Path});
+            (Episode item) => <String, Object?>{
+                  'Id': item.Id,
+                  'Quality': item.Quality,
+                  'Path': item.Path
+                });
 
   final sqflite.DatabaseExecutor database;
 
@@ -339,8 +380,10 @@ class _$EpisodeDao extends EpisodeDao {
   @override
   Future<Episode?> getEpisodeWithId(int id) async {
     return _queryAdapter.query('SELECT * FROM Episode WHERE Id = ?1',
-        mapper: (Map<String, Object?> row) =>
-            Episode(row['Id'] as int, row['Path'] as String),
+        mapper: (Map<String, Object?> row) => Episode(
+            Id: row['Id'] as String,
+            Quality: row['Quality'] as String?,
+            Path: row['Path'] as String),
         arguments: [id]);
   }
 
@@ -407,7 +450,7 @@ class _$ReviewsDao extends ReviewsDao {
   @override
   Future<Review?> getReviewWithId(int id) async {
     return _queryAdapter.query('SELECT * FROM Review WHERE Id = ?1',
-        mapper: (Map<String, Object?> row) => Review(row['Id'] as int,
+        mapper: (Map<String, Object?> row) => Review(row['Id'] as String,
             row['ReviewText'] as String, row['Rating'] as int),
         arguments: [id]);
   }
@@ -476,7 +519,7 @@ class _$TagsDao extends TagsDao {
   Future<Tag?> getTagWithId(int id) async {
     return _queryAdapter.query('SELECT * FROM Tag WHERE Id = ?1',
         mapper: (Map<String, Object?> row) => Tag(
-            row['Id'] as int, row['Name'] as String, row['Color'] as String),
+            row['Id'] as String, row['Name'] as String, row['Color'] as String),
         arguments: [id]);
   }
 

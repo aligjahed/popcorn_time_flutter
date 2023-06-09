@@ -3,7 +3,7 @@ import 'package:floor/floor.dart';
 @entity
 class Review {
   @primaryKey
-  final int Id;
+  final String Id;
 
   final String ReviewText;
   final int Rating;

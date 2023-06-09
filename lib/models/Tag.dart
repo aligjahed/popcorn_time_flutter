@@ -3,7 +3,7 @@ import 'package:floor/floor.dart';
 @entity
 class Tag{
   @primaryKey
-  final int Id;
+  final String Id;
 
   final String Name;
   final String Color;

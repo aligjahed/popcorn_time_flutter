@@ -7,6 +7,9 @@ abstract class MoviesDao{
   @Query('SELECT * FROM Movies')
   Future<List<Movie>?> getAllMovies();
 
+  @Query('SELECT * FROM Movies WHERE Name = :name')
+  Future<Movie?> getMovieByName(String name);
+
   @insert
   Future<void> addMovie(Movie movie);
 
